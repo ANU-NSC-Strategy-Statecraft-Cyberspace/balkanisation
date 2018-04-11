@@ -20,7 +20,6 @@ class Server:
     def __init__(self, name):
         self.name = name
         self.context = None
-        self.alpha = None
         self.network = None
 
         self.prob_block_threat = 0.0
@@ -41,7 +40,7 @@ class Server:
     def run_one_cycle(self):
         packet = Packet()
 
-        packet.threat = flip_coin(self.alpha)
+        packet.threat = True
 
         packet.receiver = self
         while packet.receiver == self:

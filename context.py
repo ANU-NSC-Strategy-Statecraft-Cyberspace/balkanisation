@@ -1,45 +1,16 @@
 import random
 from agents import User, Country
-from tree import Tree
+from network import Network
 
 import networkx as nx
 from forceatlas2 import forceatlas2_networkx_layout
 
 import matplotlib.pyplot as plt
 
-class Parameters:
-    """
-    A class to hold the behavioural variables. The variables have been
-    separated into a class to make it easier to compare different settings on
-    the same behaviour or the same settings on different behaviours.
-
-    The default settings for the class variables are:
-
-    =====================================     ===============   ======================================================
-    Class variable (Behaviour parameter)      Default Value     Description
-    =====================================     ===============   ======================================================
-    alpha                                     1.0               The probablity of sending a threat instead of a good.
-    country_prob_block_threat                 1.0               The probability a country will block a threat.
-    =====================================     ===============   ======================================================
-    """
-
-    def __init__(self):
-
-        self.alpha = 1.0
-        self.user_prob_block_threat = 0.0
-        self.country_prob_block_threat = 1.0
-
-        self.num_users = 100
-        self.num_countries = 10
-
-        self.skip_frames = 10
-
-        self.edges_per_node = 1
-
 class Context:
     def __init__(self, param):
 
-        self.network = Tree()
+        self.network = Network()
         self.param = param
         self.edge_colors = {}
         self.edge_countdowns = {}
@@ -54,7 +25,6 @@ class Context:
             u = User('U' + str(i))
             u.context = self
             u.network = self.network
-            u.alpha = self.param.alpha
             u.prob_block_threat = self.param.user_prob_block_threat
             servers.append(u)
 
@@ -62,7 +32,6 @@ class Context:
             c = Country('C' + str(i))
             c.context = self
             c.network = self.network
-            c.alpha = self.param.alpha
             c.prob_block_threat = self.param.country_prob_block_threat
             servers.append(c)
 

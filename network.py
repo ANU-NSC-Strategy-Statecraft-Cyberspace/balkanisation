@@ -1,7 +1,7 @@
 import random
 import networkx as nx
 
-class Tree:
+class Network:
     def __init__(self):
         self.g = None
         self.centralities = {}

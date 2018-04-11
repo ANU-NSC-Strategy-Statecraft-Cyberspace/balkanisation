@@ -16,7 +16,7 @@ class Context:
         self.edge_countdowns = {}
         self.node_colors = {}
         self.node_countdowns = {}
-        self.balkanisation = []
+        self.absolute_balkanisation = []
         self.relative_balkanisation = []
 
         servers = []
@@ -39,6 +39,7 @@ class Context:
         self.pos = self.layout(None, 10)
 
     def packet_made(self, node, packet):
+        """ Display a threat packet's path in red and the sender node in purple """
         if packet.threat:
             for a, b in zip(packet.path, packet.path[1:]):
                 self.edge_colors[(a,b)] = [1,0,0]
@@ -48,6 +49,7 @@ class Context:
             self.node_countdowns[node] = self.param.skip_frames
 
     def node_blocked_threat(self, node, packet):
+        """ Display a blocked packet's intended path and receiver in green, and the blocker in cyan """
         if packet.threat:
             for a, b in zip([node] + packet.path, packet.path):
                 self.edge_colors[(a,b)] = [0,1,0]
@@ -60,15 +62,17 @@ class Context:
             self.node_countdowns[node] = self.param.skip_frames
 
     def node_received_threat(self, node, packet):
+        """ Display a threat packet's target in red """
         self.node_colors[node] = [1,0,0]
         self.node_countdowns[node] = self.param.skip_frames
 
     def run_one_cycle(self, calc_centralities=True, calc_balkanisation=True):
+        """ Centralities are used for display to size nodes, balkanisation is used for the final plot """
         random.choice(list(self.network.g.nodes)).run_one_cycle()
         if calc_centralities:
             self.network.update_centralities()
         if calc_balkanisation:
-            self.balkanisation.append(self.network.balkanisation())
+            self.absolute_balkanisation.append(self.network.absolute_balkanisation())
             self.relative_balkanisation.append(self.network.relative_balkanisation([n for n in self.network.g if isinstance(n,Country)]))
 
     def layout(self, pos, iterations):
@@ -92,7 +96,7 @@ class Context:
             nx.draw(self.network.g, pos=self.pos, node_color=self.get_colors(), node_size=self.get_sizes(), edge_color=self.get_edge_colors())
 
     def plot(self):
-        plt.plot(self.balkanisation, label='Absolute')
+        plt.plot(self.absolute_balkanisation, label='Absolute')
         plt.plot(self.relative_balkanisation, label='Relative')
         plt.ylim(0,1)
         plt.xlabel('Time')
@@ -101,6 +105,7 @@ class Context:
 
 
     def get_node_color(self, n):
+        """ By default, users are black and countries are blue. Colours can change temporarily in response to packets. """
         if n in self.node_colors:
             color = self.node_colors[n]
             self.node_countdowns[n] -= 1
@@ -111,6 +116,7 @@ class Context:
             return [0,0,0] if isinstance(n, User) else [0,0.5,1]
 
     def get_edge_color(self, e):
+        """ By default, edges are black. Colours can change temporarily in response to packets. """
         a,b = e
         if (a,b) in self.edge_colors:
             color = self.edge_colors[(a,b)]

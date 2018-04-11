@@ -10,3 +10,6 @@ National Security College <http://nsc.anu.edu.au/>, Australian National Universi
 Main contact: Professor Roger Bradbury <roger.bradbury@anu.edu.au>
 
 # Usage
+The main file is balkanisation.py.
+
+To change parameter settings, modify the class Parameters in balkanisation.py.
